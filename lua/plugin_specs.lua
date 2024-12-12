@@ -57,6 +57,7 @@ local plugin_specs = {
     end,
     event = "VeryLazy",
     build = ":TSUpdate",
+
     config = function()
       require("config.treesitter")
     end,
@@ -80,6 +81,7 @@ local plugin_specs = {
     config = function(plugin)
       vim.opt.rtp:append(plugin.dir .. "/vim")
     end,
+
     ft = { "lisp" },
   },
 
@@ -540,25 +542,12 @@ local plugin_specs = {
     ft = "lua", -- only load on lua files
     opts = {},
   },
-  {
-    "CopilotC-Nvim/CopilotChat.nvim",
-    branch = "canary",
-    dependencies = {
-      { "zbirenbaum/copilot.lua" }, -- or github/copilot.vim
-      { "nvim-lua/plenary.nvim" }, -- for curl, log wrapper
-    },
-    opts = {
-      debug = true, -- Enable debugging
-      -- See Configuration section for rest
-    },
-    -- See Commands section for default commands if you want to lazy load on them
-  },
-  {
-    "zbirenbaum/copilot.lua",
-    cmd = "Copilot",
-    config = function()
-      require("copilot").setup {}
-    end,
+  { 
+    'codota/tabnine-nvim', 
+     build = "./dl_binaries.sh",
+     config = function()
+	require("config.tabnine")
+     end,
   },
   {
     "smjonas/live-command.nvim",
@@ -578,6 +567,24 @@ local plugin_specs = {
       require("nvim-lightbulb").setup { autocmd = { enabled = true } }
     end,
   },
+  {
+    "andweeb/presence.nvim",
+    config = function()
+      require("config.presence")
+    end,
+  },
+  {
+     "OXY2DEV/markview.nvim",
+     lazy = false,      -- Recommended
+     -- ft = "markdown" -- If you decide to lazy-load anyway
+     dependencies = {
+         "nvim-treesitter/nvim-treesitter",
+         "nvim-tree/nvim-web-devicons"
+     },
+     config = function()
+	require("config.markview")
+     end,
+  }
 }
 
 require("lazy").setup {

@@ -149,6 +149,26 @@ if utils.executable('pyright') then
     cmd = { "delance-langserver", "--stdio" },
     on_attach = custom_attach,
     capabilities = merged_capability,
+    on_init = function(client)
+      if not pyright_restarted then
+          local handle = io.popen("pyenv version-name")
+          local active_python_version = handle:read("*a"):gsub("%s+", "") -- Trim whitespace
+          handle:close()
+
+          if active_python_version and active_python_version ~= "" then
+              print("Active pyenv version: " .. active_python_version)
+              vim.env.PATH = os.getenv("HOME") .. "/.pyenv/versions/" .. active_python_version .. "/bin:" .. vim.env.PATH
+              pyright_restarted = true
+              vim.schedule(function()
+                  vim.cmd('LspRestart pyright')
+                  print("Pyright restarted with pyenv version " .. active_python_version)
+              end)
+          else
+              print("No active pyenv version found.")
+          end
+      end
+      return true
+  end,
     settings = {
       pyright = {
         -- disable import sorting and use Ruff for this
